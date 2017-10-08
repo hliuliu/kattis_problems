@@ -15,8 +15,8 @@ def greedy(i):
     count =0
     while i:
         # print i
-        count+=1
-        i-=coins[maxc[i]]
+        inc,i =divmod(i,coins[maxc[i]])
+        count+=inc
         # print i
     return count
 

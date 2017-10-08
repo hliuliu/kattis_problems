@@ -52,12 +52,13 @@ public class greetingcard{
 	static int[][] combs = {{2018,0},{0,2018},{1118,1680},{1680,1118}, {-2018,0}, {0,-2018}, {-1118,1680}, {1118,-1680},{-1118,-1680},
 	{1680,-1118},{-1680,1118},{-1680,-1118}};
 
-	public static Pair[] nbrs(Pair p) {
-		Pair[] pair  = new Pair [combs.length];
-		int i=0;
+	public static List<LinkedList<Integer>> nbrs(LinkedList<Integer> p) {
+		List<LinkedList<Integer>> pair  = new LinkedList<LinkedList<Integer>>();
 		for (int [] comb:combs) {
-			pair[i]=new Pair (p.x+comb[0],p.y+comb[1]);
-			i++;
+			LinkedList<Integer> pp = new LinkedList<Integer>();
+			pp.add(p.get(0)+comb[0]);
+			pp.add(p.get(1)+comb[1]);
+			pair.add(pp);
 		}
 		return pair;
 	}
@@ -74,16 +75,15 @@ public class greetingcard{
 
 
 	public static int process(int[][]listCoors) {
-		Set <Pair> pts  = new HashSet<Pair>();
+		Set <LinkedList<Integer> > pts  = new HashSet<LinkedList<Integer> >();
 		int count = 0;
 		for (int[] coor: listCoors) {
-			Pair p = new Pair(coor[0],coor[1]);
-			// System.out.println(pts);
-			for (Pair np: nbrs(p)) {
-				// System.out.println(np);
-				if (inset(np,pts)) {
-					// System.out.println("yes");
-					count ++;
+			LinkedList<Integer> p = new LinkedList<Integer> ();
+			p.add(coor[0]);
+			p.add(coor[1]);
+			for (LinkedList<Integer> np: nbrs(p)) {
+				if (pts.contains(np)) {
+					count++;
 				}
 			}
 			pts.add(p);
