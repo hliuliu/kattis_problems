@@ -1,5 +1,5 @@
 
-// TLE :(
+// Accepted :)
 
 #include <iostream>
 #include <vector>
@@ -10,19 +10,21 @@
 
 using namespace std;
 
+typedef unsigned int uint;
+
 int r;
 
 
 
 
-void transform_(int r, pair<int,int> &gem) {
-	int x = gem.first, y= gem.second;
+void transform_(int r, pair<long,long> &gem) {
+	long x = gem.first, y= gem.second;
 	gem.first = x*r+y;
 	gem.second = y-x*r;
 }
 
 
-int binsearch(int key, vector<int> tail, vector<int> arr, int start, int end) {
+int binsearch(long key, vector<int> &tail, vector<long> &arr, int start, int end) {
 	while (end-start>2) {
 		int mid = (start+end)/2;
 		if (arr[tail[mid]]>key) {
@@ -39,7 +41,7 @@ int binsearch(int key, vector<int> tail, vector<int> arr, int start, int end) {
 }
 
 
-int LIS (vector<int> arr) {
+int LIS (vector<long> &arr) {
 	int n = arr.size();
 	vector <int> tail(n,0);//prev(n,-1);
 	int sz =1;
@@ -64,18 +66,21 @@ int main(int argc, char const *argv[])
 {
 	int n,w,h;
 	cin >> n >> r >> w >> h;
-	vector<pair<int,int> > gems (n);
+	vector<pair<long,long> > gems (n);
 	for (int i=0;i<n;i++) {
 		cin >> gems[i].first >> gems[i].second;
 		transform_(r,gems[i]);
+		// cout << gems[i].first << " " << gems[i].second << endl;
 	}
 	sort(gems.begin(),gems.end());
-	vector<int> arr(n);
+	// cout << endl;
+	vector<long> arr(n);
 	for (int i =0;i<n;i++) {
+		// cout << gems[i].first << " " << gems[i].second << endl;
 		arr[i] = gems[i].second;
 	}
 	int ans = LIS(arr);
-	cout << ans << endl;
+	cout << ans << "\n";
 	return 0;
 }
 

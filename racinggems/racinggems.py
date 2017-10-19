@@ -3,7 +3,9 @@
 
 def transform(r,gem):
 	x,y= gem
-	return x*r+y, y-x*r
+	ans= x*r+y, y-x*r
+	# print ans
+	return ans
 
 
 def binsearch(key,tail,arr,start,end):
@@ -38,7 +40,13 @@ n,r,w,h = map(int, raw_input().split())
 
 gems = [transform(r,map(int,raw_input().split())) for _ in xrange(n)]
 
+# for a,b in gems:
+# 	print a,b
+# print
 gems.sort()
+
+# for a,b in gems:
+# 	print a,b
 
 print LIS(map(lambda x: x[1], gems))
 
