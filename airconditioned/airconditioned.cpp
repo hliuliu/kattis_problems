@@ -1,4 +1,9 @@
 
+
+
+/// Accepted :) [finally]
+
+
 #include <iostream>
 #include <algorithm>
 #include <vector>
@@ -179,7 +184,7 @@ int main(int argc, char const *argv[])
 	copy(minions.begin(),minions.end(),minion_vec.begin());
 	sort(minion_vec.begin(),minion_vec.end(),compare);
 
-	int minion_endpts [201][2];
+	/*int minion_endpts [201][2];
 	for (int i =1; i<=2*m;i++) {
 		minion_endpts[i][0] = -1;
 		minion_endpts[i][1] = -1;
@@ -195,7 +200,16 @@ int main(int argc, char const *argv[])
 	}
 
 
-	cout << minrooms(1,2*m,minion_vec, 0, minion_endpts)<<endl;
+	cout << minrooms(1,2*m,minion_vec, 0, minion_endpts)<<endl;*/
+
+	int start = 0, ans = 0;
+	while (start<n) {
+		int room = minion_vec[start].second;
+		ans++;
+		for (;start<n && in_interval(room, minion_vec[start]);start++) {}
+	}
+
+	cout << ans << endl;
 
 	return 0;
 }
