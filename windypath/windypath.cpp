@@ -1,4 +1,5 @@
 
+// Accepted :)
 
 #include <iostream>
 #include <vector>

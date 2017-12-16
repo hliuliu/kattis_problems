@@ -1,0 +1,93 @@
+
+
+# wrong
+
+def fltoint(value):
+	try:
+		return int(value)
+	except:
+		return 1 if value>0 else -1
+
+
+class nodepair(object):
+	def __init__(self,dist,prev):
+		self.dist=dist
+		self.prev=prev
+	def __cmp__(self,other):
+		return fltoint(self.dist-other.dist)
+	def __repr__(self):
+		return str((self.dist,self.prev))
+
+
+
+def sp(G):
+	c=len(G)
+	paths=[0]*c
+	for i in xrange(c):
+		paths[i]=nodepair(0 if i==0 else float('inf'),i)
+	finished=[0]*c
+	finished[0]=1
+	f=0
+	count=1
+	while count<c:
+		mincand=None
+		for i in xrange(c):
+			if not finished[i]:
+				newpair=nodepair(paths[f].dist+G[f][i],f)
+				if cmp(newpair,paths[i])<0:
+					paths[i]=newpair
+				if mincand==None or cmp(paths[i],paths[mincand])<0:
+					mincand=i
+		finished[mincand]=1
+		f=mincand
+		count+=1
+	return paths
+
+
+def feed(u,fed,paths):
+	if fed[u]:
+		return 0
+	v=paths[u].prev
+	fed[u]=1
+	diff=paths[u].dist-paths[v].dist
+	ans=diff+feed(v,fed,paths)
+	#print u,fed,ans
+	return ans
+
+
+
+def wt_graph():
+	m,c=map(int,raw_input().split())
+	G=[[0]*c for _ in xrange(c)]
+	for _ in xrange(c*(c-1)/2):
+		i,j,d=map(int,raw_input().split())
+		G[i][j]=d
+		G[j][i]=d
+	return m,G
+
+
+def possible(m,G):
+	paths=sp(G)
+	#print paths
+	fed=[0]*len(G)
+	fed[0]=1
+	ans=1
+	while not all(fed):
+		u=fed.index(0)
+		ans+=feed(u,fed,paths)
+	#print ans
+	return ans<=m
+
+
+
+
+
+t=int(raw_input())
+
+for _ in xrange(t):
+	m,G=wt_graph()
+	res=possible(m,G)
+	print 'yes' if res else 'no'
+
+
+
