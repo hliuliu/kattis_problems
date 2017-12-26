@@ -52,26 +52,20 @@ class BipGraph {
 	}
 
 	public boolean matching() {
-		// int ct =0;
-		for (int i=1;i<=n;i++) {
-			if (match[i]==0 && !matching(i)) {
-				return false;
-			}
-		}
-		return true;
+		return matching(1);
 	}
 
 	private boolean matching(int start) {
+		if (start>n) {
+			return true;
+		}
 		for (Integer other: edges.get(start)) {
-			if (!visited[other]) {
-				// match[start] = (int)other;
-				visited[other] = true;
-				if (match[other]==0 || matching(match[other])) {
-					match[other] = start;
+			if(match[other]==0) {
+				match[other] = start;
+				if (matching(start+1)) {
 					return true;
 				}
-				// visited[other] = false;
-				// match[start] = 0;
+				match[other] = 0;
 			}
 		}
 		return false;
