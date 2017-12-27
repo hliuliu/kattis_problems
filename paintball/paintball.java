@@ -1,4 +1,5 @@
 
+// Accepted
 import java.util.*;
 
 
@@ -31,19 +32,18 @@ public class paintball {
 
 class BipGraph {
 	int n;
-	List<Set<Integer> > edges;
-	boolean[] visited;
-	int[] match;
+	List<List<Integer> > edges;
+	int[] match,victim;
 
 	public BipGraph(int n) {
 		this.n=n;
 		edges = new ArrayList<>(n+1);
 		edges.add(null);
 		for (int i=1;i<=n;i++) {
-			edges.add( new HashSet<Integer>());
+			edges.add( new LinkedList<Integer>());
 		}
-		visited = new boolean[n+1];
 		match = new int[n+1];
+		victim =new int[n+1];
 	}
 
 	public void addEdge(int u, int v) {
@@ -52,20 +52,24 @@ class BipGraph {
 	}
 
 	public boolean matching() {
-		return matching(1);
+		int count =0;
+		boolean [] visited = new boolean[n+1];
+		for (int i=1;i<=n;i++) {
+			Arrays.fill(visited, false);
+			if (matching(i,visited)) count ++;
+		}
+		return count ==n;
 	}
 
-	private boolean matching(int start) {
-		if (start>n) {
-			return true;
-		}
-		for (Integer other: edges.get(start)) {
-			if(match[other]==0) {
-				match[other] = start;
-				if (matching(start+1)) {
+	private boolean matching(int i, boolean[] visited) {
+		for (Integer j: edges.get(i)) {
+			if (!visited[j]) {
+				visited[j] = true;
+				if (victim[j]==0 || matching(victim[j], visited)) {
+					match[i] = j;
+					victim[j] = i;
 					return true;
 				}
-				match[other] = 0;
 			}
 		}
 		return false;
