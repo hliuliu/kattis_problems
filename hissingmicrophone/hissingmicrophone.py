@@ -1,0 +1,1 @@
+print 'no '*(int('ss' not in raw_input()))+'hiss'
