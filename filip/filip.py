@@ -1,0 +1,1 @@
+print max(map(lambda x: ''.join(reversed(x)),raw_input().split()))
