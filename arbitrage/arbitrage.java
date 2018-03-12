@@ -67,6 +67,8 @@ public class arbitrage {
 
 	static UF uf;
 
+	static StringBuilder sb =new StringBuilder();
+
 
 	public static boolean relax(Edge e, double[]dist) {
 		if (dist[e.v]>dist[e.u]+e.wt) {
@@ -132,7 +134,8 @@ public class arbitrage {
 			uf.union(e.u,e.v);
 		}
 
-		System.out.println(BF(c)? "Ok": "Arbitrage");
+		sb.append(BF(c)? "Ok": "Arbitrage");
+		sb.append("\n");
 
 		currencyIndex.clear();
 		edges.clear();
@@ -144,6 +147,7 @@ public class arbitrage {
 	public static void main(String[] args) throws IOException{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		while (readGraph(br)) {}
+		System.out.println(sb);
 		br.close();
 	}
 }
