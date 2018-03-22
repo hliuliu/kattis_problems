@@ -1,150 +1,201 @@
 
+// Accepted :)
+
 import java.util.*;
- 
-public class FloweryTrails {
- 
-    static class Point {
-        int n;
-        Set<Trail> trails;
-        int dist;
-        //Set<Trail> prev;
-        Trail[] prev;
-        int len;
- 
-        public Point(int n) {
-            this.n = n;
-            this.dist = Integer.MAX_VALUE;
-            trails = new HashSet<Trail>(2);
-            //prev= new HashSet<Trail>(2);
-            len=0;
-        }
-    }
- 
-    private static class PointComparator implements Comparator<Point> {
-        public int compare(Point o1, Point o2) {
-            return o1.dist - o2.dist;
-        }
-    }
- 
-    static class Trail {
-        int l;
-        Point p1, p2;
-        //boolean isPopular;
- 
-        public Trail(Point p1, Point p2, int l) {
-            this.p1 = p1;
-            this.p2 = p2;
-            this.l = l;
-        }
-    }
+import java.io.*;
 
-    static Point other(Trail t, Point p) {return p==t.p1? t.p2 : t.p1;}
- 
-    /*static void recAdd(Set<Trail> s, Point p) {
-    	if (p.prev.isEmpty()) {
-    		return;
-    	}
-    	s.addAll(p.prev);
-    	for (Trail t: p.prev) {
-    		//System.out.println("in trail");
-    		recAdd(s,other(t,p));
-    	}
-    }
-*/
-	static void iterAdd(Set<Trail> s, Point p) {
-    	Queue<Point> q = new LinkedList<Point>();
-    	q.add(p);
-    	while (!q.isEmpty()) {
-    		p=q.poll();
-    		for (int i=0 ; i< p.len;i++) {
-    			Trail t=p.prev[i];
-    			s.add(t);
-    			q.add(other(t,p));
-    		}
-    	}
-    }
 
-    static Set<Trail> hike(PriorityQueue<Point> q, Point goal) {
-    	Set<Trail> opt = new HashSet<Trail>();
-    	Set<Trail> visited = new HashSet<Trail>();
-    	while (!q.isEmpty()) {
-    		Point u = q.poll();
-    		//System.out.println(u.n);
-    		for (Trail t: u.trails) {
-    			Point po = other(t,u);
-    			/*if (!q.contains(po)) {
-    				System.out.println("point not in here");
-    				continue;
-    			}*/
-    			int w = u.dist+t.l;
-    			if (w<po.dist) {
-    				po.dist=w;
-    				po.len=0;
-    				//System.out.println("adding points");
-    				//System.out.println(u.n+" "+po.n);
-    				if (!visited.contains(t)) {
-	    				po.prev[po.len++]=t;
-	    				q.add(po);
-	    			}
-	    			visited.add(t);
-    			}
-    			else if (w==po.dist) {
-    				//System.out.println(u.n+" "+po.n);
-    				if (!visited.contains(t)) {
-	    				po.prev[po.len++]=t;
-	    				q.add(po);
-	    			}
-	    			visited.add(t);
-	    		}
 
-    		}
-    	}
-    	iterAdd(opt,goal);
-    	return opt;
-    }
- 
-    public static void main(String[] args) {
-        Scanner in = new Scanner(System.in);
- 
-        int P = in.nextInt(),
-            T = in.nextInt();
- 
-        Point points[] = new Point[P];
-        for (int i = 0; i < P; i++) {
-            points[i] = new Point(i);
-        }
-        points[0].dist = 0;
- 
-        for (int i = 0; i < T; i++) {
-            int one = in.nextInt(),
-                two = in.nextInt(),
-                l = in.nextInt();
-            Point p1 = points[one],
-                  p2 = points[two];
-            Trail trail = new Trail(p1, p2, l);
-            p1.trails.add(trail);
-            p2.trails.add(trail);
-        }
+class Vertex {
+	int index;
+	Integer dist;
+	Set<Integer> parents;
 
-        for (Point p: points) {
-        	p.prev=new Trail[p.trails.size()];
-        }
- 
-        PriorityQueue<Point> q = new PriorityQueue<Point>(P, new PointComparator());
-        /*for (Point p: points){
-        	q.add(p);
-        }*/
-        q.add(points[0]);
-       
-        Set<Trail> sol = hike(q,points[P-1]);
-
-        int sum=0;
-        for (Trail t: sol) {
-        	sum+=t.l;
-        	//System.out.println("Trail "+t.l);
-        }
-
-        System.out.println(2*sum);
-
-    }
+	public Vertex(int i) {
+		index = i;
+		parents = new HashSet<Integer>();
+		dist = null;
+	}
 }
+
+
+class Edge {
+	Vertex u,v;
+	int wt, count;
+
+	public Edge(Vertex u,Vertex v,int wt) {
+		this.u = u;
+		this.v = v;
+		this.wt=wt;
+		count = 1;
+	}
+
+	public Vertex other(Vertex w) {
+		return w.index == u.index? v: u;
+	}
+
+	public int other(int w) {
+		return w == u.index? v.index: u.index;
+	}
+}
+
+
+
+
+public class FloweryTrails {
+	
+	static int p = -1;
+	static Vertex [] V;
+	static List<Map<Integer,Edge>> L = new ArrayList<>();
+	static List<Edge> E = new ArrayList<>();
+
+	public static void addEdge(int a, int b, int wt) {
+		// TODO
+		if (a==b) {
+			// self loops are useless
+			return;
+		}
+		Vertex va = V[a], vb = V[b];
+		if (!L.get(a).containsKey(b)) {
+			Edge e = new Edge(va,vb,wt);
+			L.get(a).put(b, e);
+			L.get(b).put(a, e);
+			E.add(e);
+			return;
+		}
+
+		Edge ab = L.get(a).get(b);
+		if (ab.wt==wt) {
+			ab.count++;
+		}else if (ab.wt>wt){
+			Edge e = new Edge(va,vb,wt);
+			L.get(a).put(b,e);
+			L.get(b).put(a,e);
+			E.add(e);
+		}
+	}
+
+	public static void init() {
+		V = new Vertex[p];
+		for (int i =0;i<p;i++) {
+			V[i] = new Vertex(i);
+			L.add(new HashMap<Integer,Edge>());
+		}
+
+	}
+
+	public static void main(String[] args) throws IOException{
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		String[] tokens = br.readLine().split("\\s+");
+		p= Integer.parseInt(tokens[0]);
+		int t = Integer.parseInt(tokens[1]);
+
+		init();
+
+		while (t-->0) {
+			tokens = br.readLine().split("\\s+");
+			int a = Integer.parseInt(tokens[0]);
+			int b = Integer.parseInt(tokens[1]);
+			int wt = Integer.parseInt(tokens[2]);
+			addEdge(a,b,wt);
+		}
+
+		spalg(0);
+
+		System.out.println(sumtree(p-1)*2);
+
+	}
+
+	public static void spalg(int src) {
+		V[src].dist =0;
+		Set<Integer> unvis = new HashSet<>();
+
+		PriorityQueue<Integer> pq = new PriorityQueue<>(p, 
+			new Comparator<Integer>() {
+				public int compare(Integer a, Integer b) {
+					if (V[a].dist==V[b].dist) {
+						return 0;
+					}
+					if (V[a].dist==null) {
+						return 1;
+					}
+					if (V[b].dist==null) {
+						return -1;
+					}
+					return V[a].dist-V[b].dist;
+				}
+			}
+		);
+
+		for (int i =0;i<p;i++) {
+			unvis.add(i);
+			pq.add(i);
+		}
+		while (!unvis.isEmpty()) {
+			int v = findV(unvis,pq);
+			//System.out.println(cand);
+			unvis.remove(v);
+			// pq.remove(cand);
+			if (V[v].dist == null) {
+				break;
+			}
+			for (int u: L.get(v).keySet()) {
+					Edge uv = L.get(u).get(v);
+					if (!unvis.contains(u)) {
+						continue;
+					}
+					if (V[u].dist==null || V[u].dist> V[v].dist+uv.wt) {
+						pq.remove(u);
+						V[u].dist = V[v].dist+uv.wt;
+						V[u].parents.clear();
+						V[u].parents.add(v);
+						pq.add(u); // add again as u's priority has changed
+					}else if (V[u].dist== V[v].dist+uv.wt) {
+						V[u].parents.add(v);
+					}
+			}
+		}
+	}
+
+	public static int findV(Set<Integer> unvis, PriorityQueue<Integer> pq) {
+		/*int mv = -1;
+		Integer md = null;
+		for (int v: unvis) {
+			if (md==null || (V[v].dist!=null && V[v].dist<md)) {
+				mv = v;
+				md = V[v].dist;
+			}
+		}
+		return mv;*/
+		int mv = pq.poll();
+		while(!unvis.contains(mv)) {
+			mv = pq.poll();
+		}
+		return mv;
+	}
+
+	public static int sumtree(int dest) {
+		//BFS
+		boolean[] vis = new boolean[p];
+		vis[dest] = true;
+		Queue<Integer> q = new LinkedList<>();
+		q.add(dest);
+		int sm =0;
+		while (!q.isEmpty()) {
+			int x = q.poll();
+			for(int par: V[x].parents) {
+				Edge e = L.get(x).get(par);
+				sm += e.wt*e.count;
+				if (!vis[par]) {
+					q.add(par);
+					vis[par] = true;
+				}
+			}
+		}
+		return sm;
+	}
+}
+
+
+
+
