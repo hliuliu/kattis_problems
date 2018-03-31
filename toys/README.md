@@ -7,8 +7,8 @@
 
 ### Solution:
 
-Here, we want to fix $K$ and let $T$ vary over the positive integers.
-Let $f(T)$ denote the solution for $T$ toys.
+Here, we want to fix $$K$$ and let $$T$$ vary over the positive integers.
+Let $$f(T)$$ denote the solution for $$T$$ toys.
 Notice that $f(T)\in \{0,1,2,...,T-1\}$ and $f(1)=0$.
 Consider when $T>1$. Once the child removes the toy at position $K-1$, 
 she has to continue the same game with only $T-1$ toys, except that she begins at toy $K \mod T$ instead of toy 0.
